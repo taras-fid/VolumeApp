@@ -87,14 +87,14 @@
                                 <label class="px-dropdown-toggle mob-menu bi bi-chevron-down"></label>
                                 <div class="dropdown-menu left">
                                     <ul class="list-unstyled">
-                                        <li><a class="dropdown-item" href="../account/profile.html">Profile</a></li>
-                                        <li><a class="dropdown-item" href="../account/edit-profile.html">Edit Profile</a></li>
-                                        <li><a class="dropdown-item" href="../account/connect-wallet.html">Connect Wallet</a></li>
-                                        <li><a class="dropdown-item" href="../account/create-choose.html">Choose Blockchain</a></li>
-                                        <li><a class="dropdown-item" href="../account/new-item.html">Add New Item</a></li>
-                                        <li><a class="dropdown-item" href="../account/login.html">Login</a></li>
-                                        <li><a class="dropdown-item" href="../account/sign-up.html">Sign Up</a></li>
-                                        <li><a class="dropdown-item" href="../account/forget-password.html">Forget Password</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'users:edit_profile' %}">Profile</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'users:edit_profile' %}">Edit Profile</a></li>
+                                        <li><a class="dropdown-item" href="#">Connect Wallet</a></li>
+                                        <li><a class="dropdown-item" href="#">Choose Blockchain</a></li>
+                                        <li><a class="dropdown-item" href="#">Add New Item</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'users:login' %}">Login</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'users:signup' %}">Sign Up</a></li>
+                                        <li><a class="dropdown-item" href="#">Forget Password</a></li>
                                     </ul>
                                 </div>
                             </li>
@@ -105,8 +105,8 @@
                     <div class="header-end d-flex justify-content-center justify-content-md-end">
                         <!-- Search -->
                         <div class="h-col h-search collapse" id="header_search_bar1">
-                            <form class="h-search-form">
-                                <input type="text" placeholder="Search Here" value="" class="form-control">
+                            <form class="h-search-form" action="{% url 'pins:explore' %}" method="GET">
+                                <input type="text" name="search" placeholder="Search Here" value="{{ search }}" class="form-control">
                                 <button class="search-btn"><i class="bi bi-search"></i></button>
                             </form>
                         </div>
@@ -159,13 +159,15 @@
                             </div>
                         </div>
                         <!-- Creat-->
-                        <div class="h-col h-create">
-                            <a class="h-create-btn" href="{% url 'users:signup' %}">Sign up</a>
-                        </div>
+                        {% if not request.user.is_authenticated %}
+                            <div class="h-col h-create">
+                                <a class="h-create-btn" href="{% url 'users:login' %}">Log in</a>
+                            </div>
+                        {% endif %}
                         <!-- User -->
                         <div class="h-col h-user dropdown">
                             <button class="h-user-icon dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img title="" alt="" src="{% static 'img.jpg' %}">
+                                <img title="" alt="" src="media/{{ request.user.avatar }}">
                             </button>
                             <div class="dropdown-menu dropdown-menu-end">
                                 <div class="h-user-name">
@@ -174,7 +176,7 @@
                                 </div>
                                 <ul class="list-unstyled">
                                     <li>
-                                        <a href="#"><i class="bi bi-person"></i> My Account</a>
+                                        <a href="{% url 'users:edit_profile' %}"><i class="bi bi-person"></i> My Account</a>
                                     </li>
                                     <li>
                                         <a href="{% url 'users:edit_profile' %}"><i class="bi bi-gear"></i> My Setting</a>

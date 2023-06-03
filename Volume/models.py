@@ -7,6 +7,7 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     updated_at = models.DateTimeField(auto_now=True)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    liked_pins = models.ManyToManyField('Pin', related_name='liked_users')
 
 
 class Pin(models.Model):
@@ -25,4 +26,8 @@ class Pin(models.Model):
         self.likes += 1
         self.save()
 
+    # Метод для зменшення кількості лайків
+    def decrease_likes(self):
+        self.likes -= 1
+        self.save()
 

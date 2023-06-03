@@ -145,11 +145,19 @@
                                             <h6 class="m-0">{{pin.price}} ETH <span class="text-body fw-400">1/1</span> </h6>
                                             <a class="link-primary small fw-600" href="#">Buy Now</a>
                                         </div>
-                                        <div class="like ms-auto">
-                                            <a href="#" class="d-flex lh-1 fw-500 text-reset" onclick="addLike({{ pin.id }})">
-                                                <i class="bi bi-heart me-1"></i> <small id="like-count-{{ pin.id }}">{{pin.likes}}</small>
-                                            </a>
-                                        </div>
+                                        {% if current_user in pin.liked_users.all %}
+                                            <div class="like ms-auto">
+                                                <a href="#" class="d-flex lh-1 fw-500 text-reset" id="likeButton-{{ pin.id }}" onclick="oddLike({{ pin.id }})">
+                                                    <i class="bi bi-heart me-1 pink-heart" style="color: pink;"></i> <small id="like-count-{{ pin.id }}">{{pin.likes}}</small>
+                                                </a>
+                                            </div>
+                                        {% else %}
+                                            <div class="like ms-auto">
+                                                <a href="#" class="d-flex lh-1 fw-500 text-reset" id="likeButton-{{ pin.id }}" onclick="addLike({{ pin.id }})">
+                                                    <i class="bi bi-heart me-1"></i> <small id="like-count-{{ pin.id }}">{{pin.likes}}</small>
+                                                </a>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -209,6 +217,29 @@
                 var likeCountElement = $('#like-count-' + pinId);
                 var newLikeCount = parseInt(likeCountElement.text()) + 1;
                 likeCountElement.text(newLikeCount);
+                $('#likeButton-' + pinId).attr('onclick', 'oddLike(' + pinId + ')');
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+            }
+        });
+    }
+
+    function oddLike(pinId) {
+        var url = '/pins/pin/' + pinId + '/unlike/';
+        var csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('X-CSRFToken', csrftoken);
+            },
+            success: function (response) {
+                var likeCountElement = $('#like-count-' + pinId);
+                var newLikeCount = parseInt(likeCountElement.text()) - 1;
+                likeCountElement.text(newLikeCount);
+                $('#likeButton-' + pinId).attr('onclick', 'addLike(' + pinId + ')');
             },
             error: function (xhr, status, error) {
                 console.error("Error:", error);
